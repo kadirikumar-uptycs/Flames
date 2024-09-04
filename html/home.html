@@ -1,0 +1,178 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>FLAMES Calculator</title>
+</head>
+<style>
+    *{
+        box-sizing: content-box;
+    }
+    body{
+        color: #F3F3F3;
+        background-color: #010101;
+        margin: 0;
+        padding: 0;
+    }
+    .main{
+        position: relative;
+        width: 100vw;
+        height: 100vh;
+    }
+    .heading{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: absolute;
+        left: 50%;
+        top : 20px;
+        transform: translateX(-50%);
+    }
+    .heading .flame-icon{
+        width: 100px;
+        aspect-ratio: 1/1;
+    }
+    .heading span{
+        font-size: 41px;
+        margin-left: 5px;
+    }
+    form{
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width : 270px;
+        height: 350px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-evenly;
+        align-items: center;
+        border: 1px solid #333;
+        box-shadow: 0 0 5px rgba(64, 64, 64, 0.5);
+        border-radius: 11px;
+    }
+    .row{
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .row span{
+        position: absolute;
+        opacity: 0.5;
+        transition: 0.8s ease-in-out;
+        z-index: -1;
+        font-size: 13px;
+        font-style: italic;
+    }
+    .row input{
+        outline: none;
+        border: none;
+        border: 1px solid #cccccc;
+        color: #F3F3F3;
+        background: transparent;
+        width: 200px;
+        font-size: 17px;
+        padding: 9px 5px;
+        text-align: center;
+        border-radius: 7px;
+    }
+    .row span.label{
+        opacity: 0.9;
+        transform: translate(-70px, -20px);
+        z-index: 1;
+        background: #010101;
+        padding: 0 5px;
+        font-size: 13px;
+        color: cyan;
+    }
+    .row .button{
+        cursor: pointer;
+        font-size: 19px;
+        color: #ffe4c4;
+        background-color: #1717e6;
+    }
+    .row .button:hover{
+        color: #1717e6;
+        background-color: #ffe4c4;
+    }
+    .result{
+        position: absolute;
+        bottom: 125px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100%;
+        text-align: center;
+    }
+    .result span{
+        font-size: 21px;
+    }
+    .result .name1, .result .name2{
+        color: chartreuse;
+        font-style: italic;
+    }
+    .result .relation{
+        color: orange;
+        font-style: italic;
+    }
+    .result-image{
+        position: absolute;
+        bottom: 20px;
+        width: 100%;
+        text-align: center;
+    }
+    .result-image img{
+        width : 100px;
+        aspect-ratio: 1/1;
+    }
+</style>
+<body>
+    <div class="main">
+        <div class="heading">
+            <img src="{% static 'flame_icon.png'%}" alt="Flame" class="flame-icon">
+            <span>FLAMES</span>
+        </div>
+        <form action="/calculate" class="form" method="post">
+            {% csrf_token %}
+            <div class="row">
+                <input type="text" name="name1" pattern="[A-Za-z]+((\s+)[A-Za-z]+)*" title="Only Alphabets allowed">
+                <span>Name1</span>
+            </div>
+            <div class="row">
+                <input type="text" name="name2" pattern="[A-Za-z]+((\s+)[A-Za-z]+)*" title="Only Alphabets allowed">
+                <span>Name2</span>
+            </div>
+            <div class="row">
+                <input type="submit" value="Play" class="button">
+            </div>
+        </form>
+        {% if relation %}
+            <div class="result">
+                <span>Relation Between <span class="name1">{{name1}}</span> and <span class="name2">{{name2}}</span> is <span class="relation">{{relation}}</span></span>
+            </div>
+            <div class="result-image">
+                <img src="/static/{{image}}" alt="{{relation}}">
+            </div>
+        {% endif %}
+    </div>
+</body>
+<script>
+    items = document.querySelectorAll('.row');
+    for(let i = 0; i < items.length; i++){
+        let item = items[i];
+        item.children[0].addEventListener('blur', () => {
+            let input = item.children[0];
+            let span = item.children[1];
+            if(input.value){
+                span.classList.add('label');
+            }
+            else{
+                span.classList.remove('label');
+            }
+        })
+        item.children[0].addEventListener('focus',() => {
+            item.children[1].classList.add('label');
+        })
+    }
+</script>
+</html>
